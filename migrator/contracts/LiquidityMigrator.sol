@@ -25,7 +25,7 @@ contract LiquidityMigrator {
       router = IUniswapV2Router02(_router);
       pair = IUniswapV2Pair(_pair);
       routerFork = IUniswapV2Router02(_routerFork);
-      pairFork = IUniswapV2Pair(_pairFork);
+      pairfork = IUniswapV2Pair(_pairFork);
       bonusToken = BonusToken(bonusToken);
       admin = msg.sender;
     
