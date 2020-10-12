@@ -12,7 +12,7 @@ contract LiquidityMigrator {
     IUniswapV2Pair public pairfork;
     BonusToken public bonusToken;
     address public admin;
-    mapping(address => unit) public unclaimedBalances;
+    mapping(address => uint) public unclaimedBalances;
     bool public migrationDone;
 
     constructor(
@@ -25,14 +25,14 @@ contract LiquidityMigrator {
       router = IUniswapV2Router02(_router);
       pair = IUniswapV2Pair(_pair);
       routerFork = IUniswapV2Router02(_routerFork);
-      pairFork = IUniswapV2Pair(_pairFork);
+      _pairFork = IUniswapV2Pair(_pairFork);
       bonusToken = BonusToken(bonusToken);
       admin = msg.sender;
     
 }
 
-function deposit(unit amount) external {
-    require(migrationsDone == false, 'migration already done');
+function deposit(uint amount) external {
+    require(migrationDone == false, 'migration already done');
     pair.transferFrom(msg.sender, address(this), amount);
     bonusToken.mint(msg.sender, amount);
     unclaimedBalances[msg.sender] += amount;
@@ -43,7 +43,7 @@ function migrate() external {
     require(migrationDone == false, 'migration already done');
     IERC20 token0 = IERC20(pair.token0());
     IERC20 token1 = IERC20(pair.token1());
-    unit totalBalance = pair.balanceOf(address(this));
+    uint totalBalance = pair.balanceOf(address(this));
     router.removeLiquidity(
         address(token0),
         address(token1),
@@ -53,10 +53,10 @@ function migrate() external {
         address(this),
         block.timestamp
     );
-}
 
-    unit token0Balance = token0.balanceOf(address(this));
-    unit token1Balance = token1.balanceOf(address(this));
+    
+    uint token0Balance = token0.balanceOf(address(this));
+    uint token1Balance = token1.balanceOf(address(this));
     token0.approve(address(routerFork), token0Balance);
     token1.approve(address(routerFork), token1Balance);
     routerFork.addLiquidity(
@@ -75,9 +75,9 @@ function migrate() external {
     function claimLPtokens() external{
     require(unclaimedBalances[msg.sender] >= 0, 'no unclaimed balance');
     require(migrationDone == true, 'migration not dont yet');
-    unit amountToSend = unclaimedBalances[msg.sender];
+    uint amountToSend = unclaimedBalances[msg.sender];
     unclaimedBalances[msg.sender] = 0;
-    pairFork.transfer(msg.sender, amountToSend);
+    pairfork.transfer(msg.sender, amountToSend);
     }
 
 }

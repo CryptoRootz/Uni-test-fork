@@ -11,11 +11,11 @@ contract BonusToken is ERC20 {
 
     function setLiquidator(address _liquidator) external {
         require(msg.sender == admin, 'only admin');
-        liquidator = _liquidator;
+        Liquidator = _liquidator;
     }
 
-    function mint(address to, unit amount) external {
-        require(msg.sender == liquidator, 'only liqudator');
+    function mint(address to, uint amount) external {
+        require(msg.sender == Liquidator, 'only liqudator');
         _mint(to, amount);
     }
 }
